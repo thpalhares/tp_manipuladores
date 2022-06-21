@@ -1,0 +1,3 @@
+[submodule "uaibot_vinicius"]
+	path = uaibot_vinicius
+	url = https://github.com/viniciusmgn/uaibot_vinicius.git
