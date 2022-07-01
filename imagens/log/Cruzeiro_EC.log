@@ -1,0 +1,75 @@
+Input File: ./imagens/Cruzeiro_EC.svg
+Output File: ./imagens/gcode_output/Cruzeiro_EC.gcode
+Log File: ./imagens/log/Cruzeiro_EC.log
+
+wdth: 600
+hght: 400
+scale: 0.25
+x%: 0.25
+y%: 0.375
+--Found Elem: <Element '{http://www.w3.org/2000/svg}svg' at 0x000002E5FB198E50>
+  --No Name: svg
+--Found Elem: <Element '{http://www.w3.org/2000/svg}rect' at 0x000002E5FB198EA0>
+  --Name: rect
+	Class : <class 'svg2gcode_py.lib.shapes.rect'>
+	Object: <Element '{http://www.w3.org/2000/svg}rect' at 0x000002E5FB198EA0>
+	Attrs : [('x', '-2.4414e-5'), ('y', '7.3242e-6'), ('width', '600'), ('height', '400'), ('fill', '#004886')]
+	Transform: None
+	d: M -2.4414e-05 7.3242e-06 l 600.0 0 l 0 400.0 l -600.0 0 Z
+	m: None
+	d is GOOD!
+	Points: <generator object point_generator at 0x000002E5FB1A0430>
+	  pt: (-6.1035e-06, 149.99999816895)
+	    --POINT NOT PRINTED (150,150)
+	  pt: (-6.1035e-06, 149.99999816895)
+	    --POINT NOT PRINTED (150,150)
+	  pt: (149.9999938965, 149.99999816895)
+	    --Point printed
+	  pt: (149.9999938965, 49.99999816895)
+	    --Point printed
+	  pt: (-6.103499998744155e-06, 49.99999816895)
+	    --POINT NOT PRINTED (150,150)
+	  pt: (-6.1035e-06, 149.99999816895)
+	    --POINT NOT PRINTED (150,150)
+--Found Elem: <Element '{http://www.w3.org/2000/svg}path' at 0x000002E5FB198EF0>
+  --Name: path
+	Class : <class 'svg2gcode_py.lib.shapes.path'>
+	Object: <Element '{http://www.w3.org/2000/svg}path' at 0x000002E5FB198EF0>
+	Attrs : [('id', 'a'), ('d', 'm224.68 63.984 29.912-5.099 4.3939-30.024 14.093 26.872 29.912-5.099-21.202 21.707 14.093 26.872-27.196-13.457-21.202 21.707 4.3939-30.024z'), ('fill', '#fff')]
+	Transform: None
+	d: m224.68 63.984 29.912-5.099 4.3939-30.024 14.093 26.872 29.912-5.099-21.202 21.707 14.093 26.872-27.196-13.457-21.202 21.707 4.3939-30.024z
+	m: None
+	d is GOOD!
+	Points: <generator object point_generator at 0x000002E5FB1A02E0>
+	  pt: (56.17, 134.004)
+	    --Point printed
+	  pt: (56.17, 134.004)
+	    --Point printed
+	  pt: (63.648, 135.27875)
+	    --Point printed
+	  pt: (64.746475, 142.78475)
+	    --Point printed
+	  pt: (68.26972500000001, 136.06675)
+	    --Point printed
+	  pt: (75.747725, 137.3415)
+	    --Point printed
+	  pt: (70.447225, 131.91475)
+	    --Point printed
+	  pt: (73.97047500000001, 125.19675)
+	    --Point printed
+	  pt: (67.171475, 128.561)
+	    --Point printed
+	  pt: (61.870975, 123.13425000000001)
+	    --Point printed
+	  pt: (62.96945, 130.64025)
+	    --Point printed
+	  pt: (56.17, 134.004)
+	    --Point printed
+--Found Elem: <Element '{http://www.w3.org/2000/svg}use' at 0x000002E5FB198FE0>
+  --No Name: use
+--Found Elem: <Element '{http://www.w3.org/2000/svg}use' at 0x000002E5FB199030>
+  --No Name: use
+--Found Elem: <Element '{http://www.w3.org/2000/svg}use' at 0x000002E5FB199080>
+  --No Name: use
+--Found Elem: <Element '{http://www.w3.org/2000/svg}use' at 0x000002E5FB1990D0>
+  --No Name: use

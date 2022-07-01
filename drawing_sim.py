@@ -2,6 +2,8 @@ import uaibot as ub
 import numpy as np
 from svg2gcode_py import *
 
+ 
+
 def get_configuration(robot):
   return robot.q
 
@@ -60,20 +62,26 @@ def dist_plane(point, normal, origin):
 
 # sim = ub.Demo.control_demo_1()
 
-image = "./imagens/batman2.svg"
+image = "./imagens/ufmgx.svg"
 
-img_scale = 1/500
+img_scale = 1/350
 
 # Position of image in the world
 img_htm = [ [1, 0, 0, 0],
-            [0, 0, -1, -0.4],
+            [0, 0, 1, 0.4],
             [0, 1, 0, 0.4],
             [0, 0, 0,   1]]
 
-img_htm = img_htm * ub.Utils.roty(-np.pi/4)
+img_htm =  ub.Utils.rotz(np.pi/2) * img_htm * ub.Utils.roty(np.pi/9)
 
 # Generate gcode for the image
 gcode  = generate_gcode(image);
+
+# Load gcode from file
+#gcode = ""
+#with open ("cam.gcode", "r") as file:
+#    gcode =file.read()
+#    file.close()
 
 # Point array
 shapes = []
@@ -112,19 +120,23 @@ robot = ub.Robot.create_kuka_kr5()
 sim.add(robot)
 
 # Add plane to img_htm position
-plane = ub.Box(htm = img_htm * ub.Utils.trn([0, 0, 0.005]), width = 1, height = 0.001, depth = 1, name = "plane", color = "#555555")
+plane = ub.Box(htm = img_htm * ub.Utils.trn([0.2, 0.2, 0.005]), width = 0.6, height = 0.001, depth = 0.6, name = "plane", color = "#555555")
 sim.add(plane)
 
 # Add pen box
-pen_box_htm = [ [1, 0, 0, 0.4],
-                [0, 1, 0, 0.4],
-                [0, 0, 1, 0.05],
+pen_box_htm = [ [1, 0, 0, -0.1],
+                [0, 1, 0, -0.5],
+                [0, 0, 1, 0.2],
                 [0, 0, 0,   1]]
+pen_box_htm = pen_box_htm * ub.Utils.rotx(-np.pi/4) 
 pen_box = ub.Box(htm = pen_box_htm, width = 0.4, height = 0.1, depth = 0.4, color = "#222222")
 sim.add(pen_box)
 
 # Add pens
-pen_colors = ["blue", "green", "red", "cyan", "yellow", "magenta", "white", "brown", "black"]
+#pen_colors = ["blue", "brown", "black", "red","cyan", "yellow", "magenta", "white", "green" ]
+pen_colors = ["black", "black", "black", "red","red", "yellow", "magenta", "white", "green" ]
+#pen_colors = ["black", "black", "black", "black","black","black", "black", "black", "black" ]
+#pen_colors = ["blue", "blue", "blue", "blue","blue","blue", "blue", "blue", "blue" ]
 pens = []
 pens_htm = []
 point_clouds = []
@@ -135,7 +147,7 @@ for i in range(3):
         sim.add(pens[i*3+k])
 
         # point clouds
-        point_clouds.append(ub.PointCloud(points = [[0],[0],[0]], size = 0.01, color = pen_colors[i*3+k], name = ("pc" + str(i*3+k))))
+        point_clouds.append(ub.PointCloud(points = [[0],[0],[0]], size = 0.005, color = pen_colors[i*3+k], name = ("pc" + str(i*3+k))))
         sim.add(point_clouds[i*3+k])
 
 # pen_1_htm = pen_box_htm * ub.Utils.trn([0, 0, 0.075])
@@ -153,7 +165,7 @@ shape_index = 0
 for shape in shapes:
 
     # get the right pen
-    points_htm.append(pens_htm[shape_index] * ub.Utils.roty(np.pi) * ub.Utils.trn([0, 0, 0.025]))
+    points_htm.append(pens_htm[shape_index % 9] * ub.Utils.roty(np.pi) * ub.Utils.trn([0, 0, 0.025]))
 
     for point in shape:
         htm_aux = ub.Utils.trn(point)
@@ -163,7 +175,7 @@ for shape in shapes:
         points_htm.append(htm_aux)
 
     # return the pen to position
-    points_htm.append(pens_htm[shape_index] * ub.Utils.roty(np.pi) * ub.Utils.trn([0, 0, 0.025]))
+    points_htm.append(pens_htm[shape_index % 9] * ub.Utils.roty(np.pi) * ub.Utils.trn([0, 0, 0.025]))
 
     shape_index += 1
 
@@ -174,9 +186,16 @@ htm_d = points_htm[0] * ub.Utils.trn([0, 0, -0.05])
 # Captura o número de juntas do robô
 n = np.shape(robot.q)[0]
 
+
+#Cria uma matriz para o histórico de função de tarefa, da ação de controle
+#e do tempo
+hist_r = np.matrix(np.zeros((4,0)))
+hist_u = np.matrix(np.zeros((n,0)))
+hist_t = []
+
 dt = 0.01
 t = 0
-tmax = 6
+tmax = 10
 #Colocaremos aqui nosso "main" do controlador, que ficará em um laço
 #durante um tempo tmax
 
@@ -215,20 +234,20 @@ while point_index < len(points_htm):
     if dist_plane(current_point, -img_htm[0:3, 2], img_htm[0:3, 3]) < 0.001:
         pen_tip_htm = fk * ub.Utils.trn([0, 0, 0.05])
         shape_points.append(current_point)
-        point_clouds[shape_index]._points = np.transpose(shape_points)
-        point_clouds[shape_index].add_ani_frame(time = t + dt, initial_ind = 0, final_ind = len(shape_points) - 1)
+        point_clouds[shape_index % 9]._points = np.transpose(shape_points)
+        point_clouds[shape_index % 9].add_ani_frame(time = t + dt, initial_ind = 0, final_ind = len(shape_points) - 1)
         has_drawn = True
 
     # Pick up the pen
     if has_pen == False and has_drawn == False:
-        dist_pen = [fk[0:3, 3] - pens_htm[shape_index][0:3, 3]]
+        dist_pen = [fk[0:3, 3] - pens_htm[shape_index % 9][0:3, 3]]
         if np.linalg.norm(dist_pen) < 0.03:
-            robot.attach_object(pens[shape_index])
+            robot.attach_object(pens[shape_index % 9])
             has_pen = True
 
     # Put down the pen
     if has_pen == True and has_drawn == True:
-        dist_pen = [fk[0:3, 3] - pens_htm[shape_index][0:3, 3]]
+        dist_pen = [fk[0:3, 3] - pens_htm[shape_index % 9][0:3, 3]]
         if np.linalg.norm(dist_pen) < 0.03:
             robot._attached_objects = []
             # print("detached")
@@ -247,14 +266,19 @@ while point_index < len(points_htm):
     #################################
     # Fim da lógica de controle     #
     #################################
-
+    hist_r = np.block([hist_r, r])
+    hist_u = np.block([hist_u, u])
+    hist_t.append(t)
     #O tempo sempre vai passar no final do ciclo
     t += dt
 
 #Vamos ver o resultado
-# print(shape_points)
-# print(point_cloud._points)
+ #print(shape_points)
+ #print(point_cloud._points)
 
+#plota os gráficos
+ub.Utils.plot(hist_t, hist_r, "", "Tempo (s)", "Função de tarefa", "r")
+ub.Utils.plot(hist_t, hist_u, "", "Tempo (s)", "Ação (rad/s ou m/s)", "u")
 print()
 sim.run()
 sim.save('.\\','drawing_sim')

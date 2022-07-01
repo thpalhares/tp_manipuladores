@@ -1,0 +1,11 @@
+Input File: ./imagens/heart3.svg
+Output File: ./imagens/gcode_output/heart3.gcode
+Log File: ./imagens/log/heart3.log
+
+wdth: 2400
+hght: 2186
+scale: 0.0625
+x%: 0.0625
+y%: 0.0686184812442818
+--Found Elem: <Element '{http://www.w3.org/2000/svg}svg' at 0x000002837F2E8DB0>
+  --No Name: svg
